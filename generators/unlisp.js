@@ -99,7 +99,8 @@ Blockly.UnLisp.finish = function (code) {
   delete Blockly.UnLisp.definitions_
   delete Blockly.UnLisp.functionNames_
   Blockly.UnLisp.variableDB_.reset()
-  return definitions.join('') + '\n' + code
+  var defCode = definitions.join('')
+  return defCode + (defCode.length ? '\n' : '') + code
 }
 
 /**
@@ -111,48 +112,19 @@ Blockly.UnLisp.finish = function (code) {
 Blockly.UnLisp.scrubNakedValue = function (line) {
   return line + '\n'
 }
-// DONE: ^^^^^^^^^^^^^^^^^^^^^ refactored/implemented
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
- * Encode a string as a properly escaped UnLisp string, complete with
- * quotes.
+ * Encode a string as a properly escaped UnLisp quote
  * @param {string} string Text to encode.
- * @return {string} UnLisp string.
+ * @return {string} UnLisp quote.
  * @private
  */
 Blockly.UnLisp.quote_ = function (string) {
   string = string.replace(/\\/g, '\\\\')
     .replace(/\n/g, '\\\n')
-    .replace(/'/g, '\\\'');
-  return '\'' + string + '\'';
-};
-
-/**
- * Encode a string as a properly escaped multiline UnLisp string, complete with
- * quotes.
- * @param {string} string Text to encode.
- * @return {string} UnLisp string.
- * @private
- */
-Blockly.UnLisp.multiline_quote_ = function (string) {
-  string = string.replace(/\\/g, '\\\\')
-    .replace(/\n/g, '\\\n')
-    .replace(/'/g, '\\\'');
-  return '[===' + string + '===]';
-};
+    .replace(/'/g, '\\\'')
+  return '\'' + string
+}
 
 /**
  * Common tasks for generating UnLisp from blocks.
@@ -160,36 +132,35 @@ Blockly.UnLisp.multiline_quote_ = function (string) {
  * Calls any statements following this block.
  * @param {!Blockly.Block} block The current block.
  * @param {string} code The UnLisp code created for this block.
- * @param {boolean=} opt_thisOnly True to generate code for only this statement.
+ * @param {boolean=} optThisOnly True to generate code for only this statement.
  * @return {string} UnLisp code with comments and subsequent blocks added.
  * @private
  */
-Blockly.UnLisp.scrub_ = function (block, code, opt_thisOnly) {
-  var commentCode = '';
+Blockly.UnLisp.scrub_ = function (block, code, optThisOnly) {
+  var commentCode = ''
   // Only collect comments for blocks that aren't inline.
   if (!block.outputConnection || !block.outputConnection.targetConnection) {
     // Collect comment for this block.
-    var comment = block.getCommentText();
+    var comment = block.getCommentText()
     if (comment) {
-      comment = Blockly.utils.string.wrap(comment,
-        Blockly.UnLisp.COMMENT_WRAP - 3);
-      commentCode += Blockly.UnLisp.prefixLines(comment, '-- ') + '\n';
+      comment = Blockly.utils.string.wrap(comment, Blockly.UnLisp.COMMENT_WRAP - 3)
+      commentCode += Blockly.UnLisp.prefixLines(comment, '; ') + '\n'
     }
     // Collect comments for all value arguments.
     // Don't collect comments for nested statements.
     for (var i = 0; i < block.inputList.length; i++) {
-      if (block.inputList[i].type == Blockly.INPUT_VALUE) {
-        var childBlock = block.inputList[i].connection.targetBlock();
+      if (block.inputList[i].type === Blockly.INPUT_VALUE) {
+        var childBlock = block.inputList[i].connection.targetBlock()
         if (childBlock) {
-          comment = Blockly.UnLisp.allNestedComments(childBlock);
+          comment = Blockly.UnLisp.allNestedComments(childBlock)
           if (comment) {
-            commentCode += Blockly.UnLisp.prefixLines(comment, '-- ');
+            commentCode += Blockly.UnLisp.prefixLines(comment, '; ')
           }
         }
       }
     }
   }
-  var nextBlock = block.nextConnection && block.nextConnection.targetBlock();
-  var nextCode = opt_thisOnly ? '' : Blockly.UnLisp.blockToCode(nextBlock);
-  return commentCode + code + nextCode;
-};
+  var nextBlock = block.nextConnection && block.nextConnection.targetBlock()
+  var nextCode = optThisOnly ? '' : Blockly.UnLisp.blockToCode(nextBlock)
+  return commentCode + code + nextCode
+}

@@ -51,10 +51,10 @@ Blockly.UnLisp['unlisp_math_single'] = function (block) {
   return [code, Blockly.UnLisp.ORDER_HIGH]
 }
 
-Blockly.UnLisp['math_number_property'] = function (block) {
+Blockly.UnLisp['unlisp_math_number_property'] = function (block) {
   // Check if a number is even, odd, positive, or negative
   // or if it is divisible by certain number. Returns true or false.
-  var numberToCheck = Blockly.UnLisp.valueToCode(block, 'numberToCheck', Blockly.UnLisp.ORDER_MULTIPLICATIVE) || '0'
+  var numberToCheck = Blockly.UnLisp.valueToCode(block, 'NUMBER_TO_CHECK', Blockly.UnLisp.ORDER_MULTIPLICATIVE) || '0'
   var dropdownProperty = block.getFieldValue('PROPERTY')
   var code
   switch (dropdownProperty) {

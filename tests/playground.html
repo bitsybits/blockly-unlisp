@@ -56,6 +56,7 @@
 <script src="../generators/dart/procedures.js"></script>
 <script src="../generators/unlisp.js"></script>
 <script src="../generators/unlisp/math.js"></script>
+<script src="../generators/unlisp/text.js"></script>
 <script src="../generators/unlisp/variables.js"></script>
 <script src="../generators/unlisp/variables_dynamic.js"></script>
 <script src="../msg/messages.js"></script>
@@ -70,6 +71,7 @@
 <script src="../blocks/procedures.js"></script>
 <script src="../blocks/unlisp/math.js"></script>
 <script src="../blocks/unlisp/loops.js"></script>
+<script src="../blocks/unlisp/text.js"></script>
 <script src="blocks/test_blocks.js"></script>
 <script src="./playgrounds/screenshot.js"></script>
 
@@ -746,6 +748,56 @@ var spaghettiXml = [
       </block>
       <block type="controls_whileUntil">
         <field name="MODE">WHILE</field>
+      </block>
+    </category>
+    <category name="Text" colour="#5ba58c">
+      <block type="text">
+        <field name="TEXT"></field>
+      </block>
+      <block type="unlisp_text_quote">
+        <value name="VALUE">
+          <shadow type="math_arithmetic">
+            <field name="OP">ADD</field>
+            <value name="A">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <value name="B">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+          </shadow>
+        </value>
+      </block>
+      <block type="unlisp_text_eval">
+        <value name="QUOTE">
+          <shadow type="unlisp_text_quote">
+            <value name="VALUE">
+              <shadow type="math_arithmetic">
+                <field name="OP">ADD</field>
+                <value name="A">
+                  <shadow type="math_number">
+                    <field name="NUM">1</field>
+                  </shadow>
+                </value>
+                <value name="B">
+                  <shadow type="math_number">
+                    <field name="NUM">1</field>
+                  </shadow>
+                </value>
+              </shadow>
+            </value>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_print">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
       </block>
     </category>
     <sep></sep>
