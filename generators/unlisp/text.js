@@ -14,7 +14,7 @@ Blockly.UnLisp['text'] = function (block) {
 Blockly.UnLisp['text_print'] = function (block) {
   // Print statement.
   var msg = Blockly.UnLisp.valueToCode(block, 'TEXT', Blockly.UnLisp.ORDER_NONE) || '()'
-  return '(print ' + msg + ')'
+  return '(print ' + msg + ')\n'
 }
 
 Blockly.UnLisp['unlisp_text_quote'] = function (block) {
