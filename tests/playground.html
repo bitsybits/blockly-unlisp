@@ -73,6 +73,7 @@
 <script src="../blocks/unlisp/math.js"></script>
 <script src="../blocks/unlisp/loops.js"></script>
 <script src="../blocks/unlisp/text.js"></script>
+<script src="../blocks/unlisp/lists.js"></script>
 <script src="blocks/test_blocks.js"></script>
 <script src="./playgrounds/screenshot.js"></script>
 
@@ -800,6 +801,18 @@ var spaghettiXml = [
           </shadow>
         </value>
       </block>
+    </category>
+    <category name="Lists" colour="#745ba5">
+      <block type="lists_create_with">
+        <mutation items="0"></mutation>
+      </block>
+      <block type="lists_create_with">
+        <mutation items="3"></mutation>
+      </block>
+      <block type="unlisp_statement_list"></block>
+      <block type="unlisp_list_car"></block>
+      <block type="unlisp_list_cdr"></block>
+      <block type="unlisp_convert"></block>
     </category>
     <sep></sep>
     <category name="Variables" colour="#a55b80" custom="VARIABLE"></category>
