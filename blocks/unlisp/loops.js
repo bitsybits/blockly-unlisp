@@ -4,6 +4,12 @@
 goog.require('Blockly')
 
 var Helper = {
+  REPEAT_LOOP_TYPES: [
+    'controls_repeat',
+    'controls_repeat_ext',
+    'unlisp_controls_repeat'
+  ],
+
   ALL_LOOP_TYPES: [
     'controls_repeat',
     'controls_repeat_ext',
@@ -19,10 +25,10 @@ var Helper = {
    * @param {!Blockly.Block} block Current block.
    * @return {Blockly.Block} The nearest surrounding loop, or null if none.
    */
-  getSurroundLoop: function (block) {
+  getSurroundLoop: function (block, loops = Helper.ALL_LOOP_TYPES) {
     // Is the block nested in a loop?
     do {
-      if (Helper.ALL_LOOP_TYPES.indexOf(block.type) !== -1) {
+      if (loops.indexOf(block.type) !== -1) {
         return block
       }
       block = block.getSurroundParent()
@@ -127,14 +133,15 @@ Blockly.Blocks['unlisp_while_itr'] = {
     var block = Helper.getSurroundLoop(this)
     if (block) {
       var haystack = block.inputList[0].connection.targetConnection.sourceBlock_
-      if (!Helper.isChildExist(haystack, this)) {
+      if ((Helper.REPEAT_LOOP_TYPES.indexOf(block.type) !== -1) && Helper.isChildExist(haystack, this)) {
+        whyMsg = 'This constant returns a value. Do not use it to set up a loop.'
+      } else {
         this.setWarningText(null)
         if (!this.isInFlyout) {
           this.setEnabled(true)
         }
         return
       }
-      whyMsg = 'This constant returns a value. Do not use it to set up a loop.'
     } else {
       whyMsg = Blockly.Msg['CONTROLS_FLOW_STATEMENTS_WARNING']
     }

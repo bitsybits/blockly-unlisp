@@ -5,14 +5,6 @@ goog.provide('Blockly.UnLisp.loops')
 
 goog.require('Blockly.UnLisp')
 
-function cleanCode (src) {
-  var dst = src
-  dst = dst.replace(/(\r\n|\n|\r)/gm, ' ')                // replace all newlines with spaces
-  dst = dst.replace(/\s+/g, ' ').trim()                   // remove extra spaces
-  dst = dst.replace(/\(?<=[(|[]\)\s+|\s+(?=[\]|)])/g, '') // remove all spaces before and after parentheses
-  return dst
-}
-
 Blockly.UnLisp['unlisp_controls_repeat'] = function (block) {
   // Repeat n times.
   var repeats = 0
@@ -28,7 +20,7 @@ Blockly.UnLisp['unlisp_controls_repeat'] = function (block) {
   branch = branch || '()'
   // do not need this because #itr is an UnLisp system variable
   // var loopVar = Blockly.UnLisp.variableDB_.getDistinctName('#itr', Blockly.Variables.NAME_TYPE)
-  return '(while (< #itr ' + repeats + ') ' + cleanCode(branch) + ')\n'
+  return '(while (< #itr ' + repeats + ') ' + Blockly.UnLisp.cleanCode(branch) + ')\n'
 }
 
 Blockly.UnLisp['unlisp_controls_whileUntil'] = function (block) {
@@ -44,7 +36,7 @@ Blockly.UnLisp['unlisp_controls_whileUntil'] = function (block) {
   if (until) {
     argument0 = '(! ' + argument0 + ')'
   }
-  return '(while ' + argument0 + ' ' + cleanCode(branch) + ')\n'
+  return '(while ' + argument0 + ' ' + Blockly.UnLisp.cleanCode(branch) + ')\n'
 }
 
 Blockly.UnLisp['unlisp_while_itr'] = function (block) {

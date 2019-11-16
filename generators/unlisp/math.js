@@ -32,18 +32,15 @@ Blockly.UnLisp['math_arithmetic'] = function (block) {
 
 Blockly.UnLisp['unlisp_math_single'] = function (block) {
   // Math operators with single operand.
+  var code = '()'
+  var arg = Blockly.UnLisp.valueToCode(block, 'NUM', Blockly.UnLisp.ORDER_UNARY) || '0'
   var operator = block.getFieldValue('OP')
-  var code
-  var arg
-  if (operator === 'NEG') {
-    // Negation is a special case given its different operator precedence.
-    arg = Blockly.UnLisp.valueToCode(block, 'NUM', Blockly.UnLisp.ORDER_UNARY) || '0'
-    return ['(- ' + arg + ')', Blockly.UnLisp.ORDER_UNARY]
-  }
-  arg = Blockly.UnLisp.valueToCode(block, 'NUM', Blockly.UnLisp.ORDER_NONE) || '0'
   switch (operator) {
     case 'ABS':
       code = '(abs ' + arg + ')'
+      break
+    case 'NEG':
+      code = '(- ' + arg + ')'
       break
     default:
       throw Error('Unknown math operator: ' + operator)

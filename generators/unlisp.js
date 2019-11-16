@@ -27,23 +27,24 @@ Blockly.UnLisp.addReservedWords(
   'task, led, ldr, rgb'
 )
 
+// TODO: check all types!!!
 Blockly.UnLisp.ORDER_ATOMIC = 0
 Blockly.UnLisp.ORDER_HIGH = 1
-Blockly.UnLisp.ORDER_EXPONENTIATION = 2
-Blockly.UnLisp.ORDER_UNARY = 3
-Blockly.UnLisp.ORDER_MULTIPLICATIVE = 4
-Blockly.UnLisp.ORDER_ADDITIVE = 5
-Blockly.UnLisp.ORDER_CONCATENATION = 6
-Blockly.UnLisp.ORDER_RELATIONAL = 7
-Blockly.UnLisp.ORDER_AND = 8
-Blockly.UnLisp.ORDER_OR = 9
+Blockly.UnLisp.ORDER_EXPONENTIATION = 99
+Blockly.UnLisp.ORDER_UNARY = 99
+Blockly.UnLisp.ORDER_MULTIPLICATIVE = 99
+Blockly.UnLisp.ORDER_ADDITIVE = 99
+Blockly.UnLisp.ORDER_CONCATENATION = 99
+Blockly.UnLisp.ORDER_RELATIONAL = 99
+Blockly.UnLisp.ORDER_AND = 99
+Blockly.UnLisp.ORDER_OR = 99
 Blockly.UnLisp.ORDER_NONE = 99
 
-Blockly.UnLisp.ORDER_OVERRIDES = [
-  [Blockly.UnLisp.ORDER_ADDITIVE, Blockly.UnLisp.ORDER_ADDITIVE],
-  [Blockly.UnLisp.ORDER_MULTIPLICATIVE, Blockly.UnLisp.ORDER_MULTIPLICATIVE],
-  [Blockly.UnLisp.ORDER_MULTIPLICATIVE, Blockly.UnLisp.ORDER_ADDITIVE]
-]
+// Blockly.UnLisp.ORDER_OVERRIDES = [
+//   [Blockly.UnLisp.ORDER_ADDITIVE, Blockly.UnLisp.ORDER_ADDITIVE],
+//   [Blockly.UnLisp.ORDER_MULTIPLICATIVE, Blockly.UnLisp.ORDER_MULTIPLICATIVE],
+//   [Blockly.UnLisp.ORDER_MULTIPLICATIVE, Blockly.UnLisp.ORDER_ADDITIVE]
+// ]
 
 /**
  * Initialise the database of variable names.
@@ -163,4 +164,23 @@ Blockly.UnLisp.scrub_ = function (block, code, optThisOnly) {
   var nextBlock = block.nextConnection && block.nextConnection.targetBlock()
   var nextCode = optThisOnly ? '' : Blockly.UnLisp.blockToCode(nextBlock)
   return commentCode + code + nextCode
+}
+
+Blockly.UnLisp.cleanCode = function (src) {
+  var dst = src
+  dst = dst.replace(/(\r\n|\n|\r)/gm, ' ') // replace all newlines with spaces
+  dst = dst.replace(/\s+/g, ' ').trim() // remove extra spaces
+  dst = dst.replace(/\(?<=[(|[]\)\s+|\s+(?=[\]|)])/g, '') // remove all spaces before and after parentheses
+  return dst
+}
+
+Blockly.UnLisp.checkChildrenType = function (block, fieldNames, type) {
+  const names = Array.isArray(fieldNames) ? fieldNames : [fieldNames]
+  for (let i = 0; i < names.length; i++) {
+    const target = block.getInputTargetBlock(names[i])
+    if (!target || target.outputConnection.check_.indexOf(type) === -1) {
+      return false
+    }
+  }
+  return true
 }
