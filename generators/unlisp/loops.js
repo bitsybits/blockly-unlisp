@@ -34,7 +34,7 @@ Blockly.UnLisp['unlisp_controls_whileUntil'] = function (block) {
   branch = Blockly.UnLisp.addLoopTrap(branch, block)
   branch = branch || '()'
   if (until) {
-    argument0 = '(! ' + argument0 + ')'
+    argument0 = '(not ' + argument0 + ')'
   }
   return '(while ' + argument0 + ' ' + Blockly.UnLisp.cleanCode(branch) + ')\n'
 }
