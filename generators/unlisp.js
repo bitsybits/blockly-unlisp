@@ -72,7 +72,8 @@ Blockly.UnLisp.init = function (workspace) {
   }
 
   // Add user variables, but only ones that are being used.
-  var variables = Blockly.Variables.allUsedVarModels(workspace)
+  var excludedBlocks = ['procedures_defreturn', 'procedures_defnoreturn', 'procedures_callreturn', 'procedures_callnoreturn']
+  var variables = Blockly.UnLisp.allUsedVarModelsExcept(workspace, excludedBlocks)
   for (let i = 0; i < variables.length; i++) {
     defvars.push(Blockly.UnLisp.variableDB_.getName(variables[i].getId(), Blockly.Variables.NAME_TYPE))
   }
@@ -183,4 +184,46 @@ Blockly.UnLisp.checkChildrenType = function (block, fieldNames, type) {
     }
   }
   return true
+}
+
+Blockly.UnLisp.existParentType = function (block, type) {
+  var parent = block.parentBlock_
+  if (!parent) {
+    return false
+  }
+  if (type === parent.type) {
+    return true
+  }
+  return Blockly.UnLisp.existParentType(parent, type)
+}
+
+Blockly.UnLisp.allUsedVarModelsExcept = function (ws, types) {
+  types = Array.isArray(types) ? types : [types]
+  var blocks = ws.getAllBlocks(false)
+  blocks = blocks.filter(function (block) {
+    return types.indexOf(block.type) === -1
+  })
+  blocks = blocks.filter(function (block) {
+    for (let i = 0; i < types.length; i++) {
+      if (Blockly.UnLisp.existParentType(block, types[i])) {
+        return false
+      }
+      return true
+    }
+  })
+
+  var variableList = []
+  for (var i = 0; i < blocks.length; i++) {
+    var blockVariables = blocks[i].getVarModels()
+    if (blockVariables) {
+      for (var j = 0; j < blockVariables.length; j++) {
+        var variable = blockVariables[j]
+        if (variable.getId()) {
+          variableList.push(variable)
+        }
+      }
+    }
+  }
+
+  return variableList
 }

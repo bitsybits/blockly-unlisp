@@ -18,7 +18,7 @@ Blockly.defineBlocksWithJsonArray([{
 },
 {
   'type': 'unlisp_list_car',
-  'message0': 'car %1',
+  'message0': 'head %1',
   'args0': [{
     'type': 'input_value',
     'name': 'LIST',
@@ -32,7 +32,7 @@ Blockly.defineBlocksWithJsonArray([{
 },
 {
   'type': 'unlisp_list_cdr',
-  'message0': 'cdr %1',
+  'message0': 'tail %1',
   'args0': [{
     'type': 'input_value',
     'name': 'LIST',
@@ -40,20 +40,6 @@ Blockly.defineBlocksWithJsonArray([{
   }],
   'inputsInline': false,
   'output': null,
-  'style': 'list_blocks',
-  'tooltip': '',
-  'helpUrl': ''
-},
-{
-  'type': 'unlisp_convert',
-  'message0': '%1',
-  'args0': [{
-    'type': 'input_value',
-    'name': 'VALUE'
-  }],
-  'inputsInline': false,
-  'previousStatement': null,
-  'nextStatement': null,
   'style': 'list_blocks',
   'tooltip': '',
   'helpUrl': ''
