@@ -186,43 +186,69 @@ Blockly.UnLisp.checkChildrenType = function (block, fieldNames, type) {
   return true
 }
 
-Blockly.UnLisp.existParentType = function (block, type) {
+Blockly.UnLisp.existParentType_ = function (block, type) {
   var parent = block.parentBlock_
   if (!parent) {
-    return false
+    return null
   }
   if (type === parent.type) {
-    return true
+    return parent
   }
-  return Blockly.UnLisp.existParentType(parent, type)
+  return Blockly.UnLisp.existParentType_(parent, type)
 }
 
 Blockly.UnLisp.allUsedVarModelsExcept = function (ws, types) {
-  types = Array.isArray(types) ? types : [types]
-  var blocks = ws.getAllBlocks(false)
-  blocks = blocks.filter(function (block) {
-    return types.indexOf(block.type) === -1
-  })
-  blocks = blocks.filter(function (block) {
-    for (let i = 0; i < types.length; i++) {
-      if (Blockly.UnLisp.existParentType(block, types[i])) {
-        return false
-      }
-      return true
-    }
-  })
-
-  var variableList = []
-  for (var i = 0; i < blocks.length; i++) {
-    var blockVariables = blocks[i].getVarModels()
+  const fillVariablesHash = function (hash, block) {
+    var blockVariables = block.getVarModels()
     if (blockVariables) {
       for (var j = 0; j < blockVariables.length; j++) {
         var variable = blockVariables[j]
-        if (variable.getId()) {
-          variableList.push(variable)
+        var id = variable.getId()
+        if (id) {
+          hash[id] = variable
         }
       }
     }
+    return !!blockVariables
+  }
+
+  types = Array.isArray(types) ? types : [types]
+  var variableHash = Object.create(null)
+  var blocks = ws.getAllBlocks(false)
+
+  // Do not include these blocks
+  blocks = blocks.filter(function (block) {
+    return types.indexOf(block.type) === -1
+  })
+
+  blocks = blocks.filter(function (block) {
+    // check if this block uses some variables, if so add all the variables to the hash table
+    if (fillVariablesHash(variableHash, block)) {
+      for (let i = 0; i < types.length; i++) {
+        // check if the parent is one of excluded blocks
+        var parent = Blockly.UnLisp.existParentType_(block, types[i])
+        if (parent) {
+          // subtract parent's variables from the found block
+          var parentVariables = parent.getVarModels()
+          for (let j = 0; j < parentVariables.length; j++) {
+            const variable = parentVariables[j]
+            delete variableHash[variable.getId()]
+          }
+          return false
+        }
+      }
+    }
+    return true
+  })
+
+  // Iterate through every block and add each variable to the hash.
+  for (var i = 0; i < blocks.length; i++) {
+    fillVariablesHash(variableHash, blocks[i])
+  }
+  // Flatten the hash into a list.
+  var variableList = []
+  for (var id in variableHash) {
+    variableList.push(variableHash[id])
   }
 
   return variableList
